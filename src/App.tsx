@@ -11,6 +11,7 @@ import Staff from "./pages/Staff";
 import Settings from "./pages/Settings";
 import Calendar from "./pages/Calendar";
 import Reports from "./pages/Reports";
+import Features from "./pages/Features";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,6 +29,7 @@ const App = () => (
             <Route path="/staff" element={<Staff />} />
             <Route path="/calendar" element={<Calendar />} />
             <Route path="/reports" element={<Reports />} />
+            <Route path="/features" element={<Features />} />
             <Route path="/settings" element={<Settings />} />
           </Route>
           <Route path="*" element={<NotFound />} />

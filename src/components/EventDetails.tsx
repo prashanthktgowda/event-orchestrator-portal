@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { CateringEvent, CateringItem, SubItem, StaffMember } from "@/data/mock-events";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -22,7 +21,10 @@ export function EventDetails({ event, onUpdateEvent }: EventDetailsProps) {
   const [showMapTokenInput, setShowMapTokenInput] = useState<boolean>(!localStorage.getItem('mapbox-token'));
   const eventDate = new Date(event.eventTime);
   
-  
+  // Handler for when map token is saved
+  const handleMapTokenSaved = () => {
+    setShowMapTokenInput(false);
+  };
 
   // Handler for updating item status
   const handleItemStatusChange = (itemId: string, status: CateringItem['status']) => {
@@ -51,11 +53,6 @@ export function EventDetails({ event, onUpdateEvent }: EventDetailsProps) {
       )
     };
     onUpdateEvent(updatedEvent);
-  };
-
-  // Handler for when map token is saved
-  const handleMapTokenSaved = () => {
-    setShowMapTokenInput(false);
   };
 
   return (

@@ -1,7 +1,7 @@
 
 import { Outlet } from "react-router-dom";
 import { Sidebar, SidebarContent, SidebarProvider, SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton } from "@/components/ui/sidebar";
-import { Calendar, Home, Users, Settings, LayoutGrid, PieChart } from "lucide-react";
+import { Calendar, Home, Users, Settings, LayoutGrid, PieChart, List } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
 const navItems = [
@@ -10,6 +10,7 @@ const navItems = [
   { title: "Calendar", icon: Calendar, path: "/calendar" },
   { title: "Staff", icon: Users, path: "/staff" },
   { title: "Reports", icon: PieChart, path: "/reports" },
+  { title: "Features", icon: List, path: "/features" },
   { title: "Settings", icon: Settings, path: "/settings" },
 ];
 

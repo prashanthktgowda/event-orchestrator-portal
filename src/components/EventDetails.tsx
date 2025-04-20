@@ -214,7 +214,7 @@ function ChecklistItem({ item, onStatusChange, onSubItemStatusChange }: Checklis
   const getStatusOptions = () => [
     { value: "pending", label: "Pending" },
     { value: "prepared", label: "Prepared" },
-    { value: "packed", label = "Packed" },
+    { value: "packed", label: "Packed" },
     { value: "loaded", label: "Loaded" }
   ];
   

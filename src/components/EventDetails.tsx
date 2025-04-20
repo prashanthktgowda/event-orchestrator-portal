@@ -1,15 +1,12 @@
 import { useState } from "react";
 import { CateringEvent, CateringItem, SubItem, StaffMember } from "@/data/mock-events";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { MapPin, Calendar, Clock, User, Users, Plus, Trash, Edit, Check, File, List, ListCheck } from "lucide-react";
+import { MapPin, Calendar, Clock, User, Users, Plus, Trash, Edit, File, List, ListCheck } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
-import EventMap from "./EventMap";
-import MapTokenInput from "./MapTokenInput";
 
 interface EventDetailsProps {
   event: CateringEvent;
@@ -18,14 +15,14 @@ interface EventDetailsProps {
 
 export function EventDetails({ event, onUpdateEvent }: EventDetailsProps) {
   const [activeTab, setActiveTab] = useState<string>("checklist");
-  const [showMapTokenInput, setShowMapTokenInput] = useState<boolean>(!localStorage.getItem('mapbox-token'));
   const eventDate = new Date(event.eventTime);
-  
-  // Handler for when map token is saved
-  const handleMapTokenSaved = () => {
-    setShowMapTokenInput(false);
-  };
 
+  const handleOpenGoogleMaps = () => {
+    const address = `${event.deliveryAddress.street}, ${event.deliveryAddress.city}, ${event.deliveryAddress.state} ${event.deliveryAddress.zipCode}`;
+    const encodedAddress = encodeURIComponent(address);
+    window.open(`https://www.google.com/maps/search/?api=1&query=${encodedAddress}`, '_blank');
+  };
+  
   // Handler for updating item status
   const handleItemStatusChange = (itemId: string, status: CateringItem['status']) => {
     const updatedEvent = { 
@@ -57,13 +54,6 @@ export function EventDetails({ event, onUpdateEvent }: EventDetailsProps) {
 
   return (
     <div className="h-full flex flex-col gap-4 p-4 overflow-y-auto">
-      {/* Map Token Input Modal */}
-      {showMapTokenInput && (
-        <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center">
-          <MapTokenInput onTokenSaved={handleMapTokenSaved} />
-        </div>
-      )}
-      
       {/* Header Section */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -88,19 +78,7 @@ export function EventDetails({ event, onUpdateEvent }: EventDetailsProps) {
       {/* Address Card */}
       <Card>
         <CardHeader className="pb-2">
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-lg">Delivery Location</CardTitle>
-            {!localStorage.getItem('mapbox-token') && (
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="h-8 text-xs"
-                onClick={() => setShowMapTokenInput(true)}
-              >
-                Add map token
-              </Button>
-            )}
-          </div>
+          <CardTitle className="text-lg">Delivery Location</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col sm:flex-row gap-4">
@@ -109,26 +87,21 @@ export function EventDetails({ event, onUpdateEvent }: EventDetailsProps) {
               <p className="text-muted-foreground">
                 {event.deliveryAddress.city}, {event.deliveryAddress.state} {event.deliveryAddress.zipCode}
               </p>
-            </div>
-            <div className="w-full sm:w-32 h-32 bg-muted rounded-md border shrink-0 overflow-hidden">
-              {localStorage.getItem('mapbox-token') ? (
-                <EventMap 
-                  lat={event.deliveryAddress.coordinates.lat}
-                  lng={event.deliveryAddress.coordinates.lng}
-                />
-              ) : (
-                <div className="h-full w-full flex items-center justify-center text-xs text-center text-muted-foreground p-1">
-                  <Button variant="ghost" size="sm" onClick={() => setShowMapTokenInput(true)}>
-                    Add map API token
-                  </Button>
-                </div>
-              )}
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="mt-2 gap-1.5"
+                onClick={handleOpenGoogleMaps}
+              >
+                <MapPin className="h-4 w-4" />
+                Open in Google Maps
+              </Button>
             </div>
           </div>
         </CardContent>
       </Card>
       
-      {/* Tabs Section */}
+      {/* Rest of the component */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1">
         <TabsList>
           <TabsTrigger value="checklist" className="flex gap-1.5">
@@ -241,7 +214,7 @@ function ChecklistItem({ item, onStatusChange, onSubItemStatusChange }: Checklis
   const getStatusOptions = () => [
     { value: "pending", label: "Pending" },
     { value: "prepared", label: "Prepared" },
-    { value: "packed", label: "Packed" },
+    { value: "packed", label = "Packed" },
     { value: "loaded", label: "Loaded" }
   ];
   

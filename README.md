@@ -178,8 +178,8 @@ Distributed under the MIT License. See `LICENSE` file for more information. *(Ma
 
 ## 📧 Contact
 
-[Your Name] - [Your Email]
+[Prashanth K T - [prashanthktgowda123@gmail.com]
 
-Project Link: [Link to your repository]
+Project Link: [(https://github.com/prashanthktgowda/event-orchestrator-portal)]
 
 ---

@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { CateringEvent } from "@/data/mock-events";
 import { format } from "date-fns";
@@ -57,13 +56,14 @@ function EventCard({ event, isSelected, onClick }: EventCardProps) {
   const eventDate = new Date(event.eventTime);
 
   // Function to get card background color based on status
-  // Palette: Green = completed, Yellow = in-progress, Purple = upcoming, Gray = fallback
+  // Palette: Green = completed, Yellow = in-progress, Purple = upcoming, Red/Gray = fallback
   const getCardColor = (status: CateringEvent['status']) => {
     switch(status) {
-      case 'upcoming': return 'bg-[#E5DEFF]';      // Soft purple
-      case 'in-progress': return 'bg-[#FEF7CD]';   // Soft yellow
+      case 'upcoming': return 'bg-[#e5deff]';      // Soft purple
+      case 'in-progress': return 'bg-[#fef7cd]';   // Soft yellow
       case 'completed': return 'bg-[#F2FCE2]';     // Soft green
-      default: return 'bg-gray-100';
+      case 'cancelled': return 'bg-[#ffe3e3]';     // Soft red (example)
+      default: return 'bg-[#f1f0fb]';              // Soft gray
     }
   };
   // Indicator color
@@ -72,6 +72,7 @@ function EventCard({ event, isSelected, onClick }: EventCardProps) {
       case 'upcoming': return 'bg-purple-500';
       case 'in-progress': return 'bg-yellow-400';
       case 'completed': return 'bg-green-500';
+      case 'cancelled': return 'bg-red-400';
       default: return 'bg-gray-300';
     }
   };
@@ -81,7 +82,7 @@ function EventCard({ event, isSelected, onClick }: EventCardProps) {
       className={cn(
         "p-3 cursor-pointer transition-all hover:shadow-lg overflow-hidden border-2",
         getCardColor(event.status),
-        isSelected ? "ring-2 ring-primary border-primary" : "hover:border-gray-400"
+        isSelected ? "ring-2 ring-primary border-primary" : "hover:border-[#9b87f5]"
       )}
       onClick={onClick}
     >
@@ -107,4 +108,3 @@ function EventCard({ event, isSelected, onClick }: EventCardProps) {
     </Card>
   );
 }
-

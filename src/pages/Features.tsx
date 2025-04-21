@@ -6,144 +6,132 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Plus, Settings, FileText, Calendar as CalendarDays } from "lucide-react";
-import { useState } from "react";
-import { FeatureModal } from "@/components/FeatureModal";
+import { Plus, FileText, Settings, Bell, FilePlus, List, Calendar, CalendarX } from "lucide-react";
+import { Link } from "react-router-dom";
 
-const featureButtons = [
+const cards = [
   {
+    icon: <Plus className="h-6 w-6 text-purple-700"/>,
     group: "Item Management",
-    title: "Add New Item",
-    desc: "Add items to your catering inventory.",
-    buttonColor: "bg-[#8B5CF6] text-white hover:bg-[#7E69AB]",
-    modalDesc: "Here you can add a new catering item. (Functionality not implemented.)"
+    desc: "Add, edit, and manage catering items and equipment",
+    features: [
+      {
+        title: "Add New Item",
+        url: "/add-item",
+        buttonClass: "bg-[#9b87f5] text-white hover:bg-[#8B5CF6]",
+      },
+      {
+        title: "View Item Catalog",
+        url: "/item-catalog",
+        buttonClass: "bg-[#ede6fc] text-[#6E59A5] hover:bg-[#d6bcfa]",
+      },
+    ],
   },
   {
-    group: "Item Management",
-    title: "View Item Catalog",
-    desc: "Browse and manage available items.",
-    buttonColor: "bg-[#E5DEFF] text-[#333] hover:bg-[#d6bcfa]",
-    modalDesc: "This would show your item catalog. (Functionality not implemented.)"
-  },
-  {
+    icon: <Settings className="h-6 w-6 text-purple-900"/>,
     group: "System Configuration",
-    title: "General Settings",
-    desc: "Update general system preferences.",
-    buttonColor: "bg-[#7E69AB] text-white hover:bg-[#6E59A5]",
-    modalDesc: "Access to general system configuration. (Functionality not implemented.)"
+    desc: "Configure system settings and preferences",
+    features: [
+      {
+        title: "General Settings",
+        url: "/general-settings",
+        buttonClass: "bg-[#7E69AB] text-white hover:bg-[#6E59A5]",
+      },
+      {
+        title: "Notification Rules",
+        url: "/notification-rules",
+        buttonClass: "bg-[#FEC6A1] text-[#403E43] hover:bg-[#FEC6A1]/80",
+      },
+    ]
   },
   {
-    group: "System Configuration",
-    title: "Notification Rules",
-    desc: "Configure notification triggers.",
-    buttonColor: "bg-[#FEC6A1] text-[#403E43] hover:bg-[#FEC6A1]/80",
-    modalDesc: "Notification rule settings (not implemented)."
-  },
-  {
+    icon: <FileText className="h-6 w-6 text-blue-600"/>,
     group: "Event Templates",
-    title: "Create Template",
-    desc: "Design a new event template.",
-    buttonColor: "bg-[#FDE1D3] text-[#403E43] hover:bg-[#fcd1af]",
-    modalDesc: "Create and save new event templates here. (Functionality not implemented.)"
+    desc: "Manage event templates and presets",
+    features: [
+      {
+        title: "Create Template",
+        url: "/create-template",
+        buttonClass: "bg-[#FDE1D3] text-[#403E43] hover:bg-[#fcd1af]",
+      },
+      {
+        title: "View Templates",
+        url: "/view-templates",
+        buttonClass: "bg-[#D3E4FD] text-[#403E43] hover:bg-[#bad3f7]",
+      },
+    ]
   },
   {
-    group: "Event Templates",
-    title: "View Templates",
-    desc: "View and manage event templates.",
-    buttonColor: "bg-[#D3E4FD] text-[#403E43] hover:bg-[#D6BCFA]",
-    modalDesc: "See all your saved event templates. (Functionality not implemented.)"
-  },
-  {
+    icon: <Calendar className="h-6 w-6 text-green-700"/>,
     group: "Schedule Management",
-    title: "Business Hours",
-    desc: "Set available hours for scheduling.",
-    buttonColor: "bg-[#F2FCE2] text-[#403E43] hover:bg-[#D6BCFA]",
-    modalDesc: "Manage your business hours here. (Functionality not implemented.)"
+    desc: "Configure scheduling rules and availability",
+    features: [
+      {
+        title: "Business Hours",
+        url: "/business-hours",
+        buttonClass: "bg-[#F2FCE2] text-[#27662D] hover:bg-[#e9f9cf]",
+      },
+      {
+        title: "Blackout Dates",
+        url: "/blackout-dates",
+        buttonClass: "bg-[#FEF7CD] text-[#705E2A] hover:bg-[#FFF7B2]",
+      }
+    ]
   },
-  {
-    group: "Schedule Management",
-    title: "Blackout Dates",
-    desc: "Block out dates for scheduling.",
-    buttonColor: "bg-[#FEF7CD] text-[#403E43] hover:bg-[#FDE1D3]",
-    modalDesc: "Configure unavailable dates (blackout dates). (Functionality not implemented.)"
-  }
-];
-
-const featureGroups = [
-  {
-    icon: <Plus className="h-5 w-5" />,
-    group: "Item Management",
-    desc: "Add, edit, and manage catering items and equipment"
-  },
-  {
-    icon: <Settings className="h-5 w-5" />,
-    group: "System Configuration",
-    desc: "Configure system settings and preferences"
-  },
-  {
-    icon: <FileText className="h-5 w-5" />,
-    group: "Event Templates",
-    desc: "Manage event templates and presets"
-  },
-  {
-    icon: <CalendarDays className="h-5 w-5" />,
-    group: "Schedule Management",
-    desc: "Configure scheduling rules and availability"
-  }
 ];
 
 export default function Features() {
-  // Modal state
-  const [modal, setModal] = useState<{open: boolean, idx: number | null}>({open: false, idx: null});
-
   return (
-    <div className="container py-6 space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">Features & Configuration</h1>
+    <div className="container py-8 space-y-10">
+      <h1 className="text-3xl font-bold">Features & Configuration</h1>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-8">
+        <div className="space-y-8">
+          {cards.slice(0, 2).map((g) => (
+            <Card key={g.group} className="rounded-xl border shadow-none">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-xl font-extrabold">{g.icon} {g.group}</CardTitle>
+                <CardDescription className="text-base">{g.desc}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {g.features.map((f) => (
+                    <Link to={f.url} key={f.title}>
+                      <button
+                        className={`w-full h-11 rounded-md font-semibold text-base focus:outline-none focus:ring-2 transition-all mb-1 ${f.buttonClass}`}
+                      >
+                        {f.title}
+                      </button>
+                    </Link>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+        <div className="space-y-8">
+          {cards.slice(2).map((g) => (
+            <Card key={g.group} className="rounded-xl border shadow-none">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-xl font-extrabold">{g.icon} {g.group}</CardTitle>
+                <CardDescription className="text-base">{g.desc}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {g.features.map((f) => (
+                    <Link to={f.url} key={f.title}>
+                      <button
+                        className={`w-full h-11 rounded-md font-semibold text-base focus:outline-none focus:ring-2 transition-all mb-1 ${f.buttonClass}`}
+                      >
+                        {f.title}
+                      </button>
+                    </Link>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {featureGroups.map(g => (
-          <Card key={g.group} className="hover:shadow-lg transition-shadow">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                {g.icon}
-                {g.group}
-              </CardTitle>
-              <CardDescription>{g.desc}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {featureButtons.filter(b => b.group === g.group).map((b, idx) => {
-                  // Index for modal: use order in the featureButtons array
-                  const modalIdx = featureButtons.findIndex(btn => btn.title === b.title && btn.group === b.group);
-                  return (
-                    <Button
-                      key={b.title}
-                      className={`w-full ${b.buttonColor} transition-all`}
-                      variant="outline"
-                      onClick={() => setModal({open: true, idx: modalIdx})}
-                    >
-                      {b.title}
-                    </Button>
-                  );
-                })}
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
-      {modal.open && modal.idx !== null && (
-        <FeatureModal
-          open={modal.open}
-          onOpenChange={open => setModal({open, idx: open ? modal.idx : null})}
-          title={featureButtons[modal.idx].title}
-          description={featureButtons[modal.idx].modalDesc}
-        />
-      )}
     </div>
   );
 }
-

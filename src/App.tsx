@@ -13,6 +13,14 @@ import Calendar from "./pages/Calendar";
 import Reports from "./pages/Reports";
 import Features from "./pages/Features";
 import NotFound from "./pages/NotFound";
+import AddItem from "./pages/AddItem";
+import ItemCatalog from "./pages/ItemCatalog";
+import GeneralSettings from "./pages/GeneralSettings";
+import NotificationRules from "./pages/NotificationRules";
+import CreateTemplate from "./pages/CreateTemplate";
+import ViewTemplates from "./pages/ViewTemplates";
+import BusinessHours from "./pages/BusinessHours";
+import BlackoutDates from "./pages/BlackoutDates";
 
 const queryClient = new QueryClient();
 
@@ -31,6 +39,14 @@ const App = () => (
             <Route path="/reports" element={<Reports />} />
             <Route path="/features" element={<Features />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="/add-item" element={<AddItem />} />
+            <Route path="/item-catalog" element={<ItemCatalog />} />
+            <Route path="/general-settings" element={<GeneralSettings />} />
+            <Route path="/notification-rules" element={<NotificationRules />} />
+            <Route path="/create-template" element={<CreateTemplate />} />
+            <Route path="/view-templates" element={<ViewTemplates />} />
+            <Route path="/business-hours" element={<BusinessHours />} />
+            <Route path="/blackout-dates" element={<BlackoutDates />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>

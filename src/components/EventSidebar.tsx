@@ -83,7 +83,7 @@ export function EventSidebar({ events, selectedEventId, onSelectEvent }: EventSi
                       <div className="flex items-center mt-1 ml-6">
                         <span className="bg-gray-50 border rounded px-2 py-0.5 mr-2 text-xs text-gray-600">{event.status.replace(/-/g, " ")}</span>
                         <span className="text-xs text-gray-500">
-                          {event.location}
+                          {event.deliveryAddress.city}, {event.deliveryAddress.state}
                         </span>
                       </div>
                     </SidebarMenuButton>

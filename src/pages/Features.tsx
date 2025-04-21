@@ -7,9 +7,96 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, Settings, FileText, CalendarDays } from "lucide-react";
+import { Plus, Settings, FileText, Calendar as CalendarDays } from "lucide-react";
+import { useState } from "react";
+import { FeatureModal } from "@/components/FeatureModal";
 
-const Features = () => {
+const featureButtons = [
+  {
+    group: "Item Management",
+    title: "Add New Item",
+    desc: "Add items to your catering inventory.",
+    buttonColor: "bg-[#8B5CF6] text-white hover:bg-[#7E69AB]",
+    modalDesc: "Here you can add a new catering item. (Functionality not implemented.)"
+  },
+  {
+    group: "Item Management",
+    title: "View Item Catalog",
+    desc: "Browse and manage available items.",
+    buttonColor: "bg-[#E5DEFF] text-[#333] hover:bg-[#d6bcfa]",
+    modalDesc: "This would show your item catalog. (Functionality not implemented.)"
+  },
+  {
+    group: "System Configuration",
+    title: "General Settings",
+    desc: "Update general system preferences.",
+    buttonColor: "bg-[#7E69AB] text-white hover:bg-[#6E59A5]",
+    modalDesc: "Access to general system configuration. (Functionality not implemented.)"
+  },
+  {
+    group: "System Configuration",
+    title: "Notification Rules",
+    desc: "Configure notification triggers.",
+    buttonColor: "bg-[#FEC6A1] text-[#403E43] hover:bg-[#FEC6A1]/80",
+    modalDesc: "Notification rule settings (not implemented)."
+  },
+  {
+    group: "Event Templates",
+    title: "Create Template",
+    desc: "Design a new event template.",
+    buttonColor: "bg-[#FDE1D3] text-[#403E43] hover:bg-[#fcd1af]",
+    modalDesc: "Create and save new event templates here. (Functionality not implemented.)"
+  },
+  {
+    group: "Event Templates",
+    title: "View Templates",
+    desc: "View and manage event templates.",
+    buttonColor: "bg-[#D3E4FD] text-[#403E43] hover:bg-[#D6BCFA]",
+    modalDesc: "See all your saved event templates. (Functionality not implemented.)"
+  },
+  {
+    group: "Schedule Management",
+    title: "Business Hours",
+    desc: "Set available hours for scheduling.",
+    buttonColor: "bg-[#F2FCE2] text-[#403E43] hover:bg-[#D6BCFA]",
+    modalDesc: "Manage your business hours here. (Functionality not implemented.)"
+  },
+  {
+    group: "Schedule Management",
+    title: "Blackout Dates",
+    desc: "Block out dates for scheduling.",
+    buttonColor: "bg-[#FEF7CD] text-[#403E43] hover:bg-[#FDE1D3]",
+    modalDesc: "Configure unavailable dates (blackout dates). (Functionality not implemented.)"
+  }
+];
+
+const featureGroups = [
+  {
+    icon: <Plus className="h-5 w-5" />,
+    group: "Item Management",
+    desc: "Add, edit, and manage catering items and equipment"
+  },
+  {
+    icon: <Settings className="h-5 w-5" />,
+    group: "System Configuration",
+    desc: "Configure system settings and preferences"
+  },
+  {
+    icon: <FileText className="h-5 w-5" />,
+    group: "Event Templates",
+    desc: "Manage event templates and presets"
+  },
+  {
+    icon: <CalendarDays className="h-5 w-5" />,
+    group: "Schedule Management",
+    desc: "Configure scheduling rules and availability"
+  }
+];
+
+export default function Features() {
+  // Modal state
+  const [modal, setModal] = useState<{open: boolean, idx: number | null}>({open: false, idx: null});
+
   return (
     <div className="container py-6 space-y-6">
       <div className="flex justify-between items-center">
@@ -17,100 +104,46 @@ const Features = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {/* Items Management */}
-        <Card className="hover:shadow-lg transition-shadow">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Plus className="h-5 w-5" />
-              Item Management
-            </CardTitle>
-            <CardDescription>
-              Add, edit, and manage catering items and equipment
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <Button className="w-full" variant="outline">
-                Add New Item
-              </Button>
-              <Button className="w-full" variant="outline">
-                View Item Catalog
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* System Configuration */}
-        <Card className="hover:shadow-lg transition-shadow">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Settings className="h-5 w-5" />
-              System Configuration
-            </CardTitle>
-            <CardDescription>
-              Configure system settings and preferences
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <Button className="w-full" variant="outline">
-                General Settings
-              </Button>
-              <Button className="w-full" variant="outline">
-                Notification Rules
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Templates */}
-        <Card className="hover:shadow-lg transition-shadow">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <FileText className="h-5 w-5" />
-              Event Templates
-            </CardTitle>
-            <CardDescription>
-              Manage event templates and presets
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <Button className="w-full" variant="outline">
-                Create Template
-              </Button>
-              <Button className="w-full" variant="outline">
-                View Templates
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Schedule Management */}
-        <Card className="hover:shadow-lg transition-shadow">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <CalendarDays className="h-5 w-5" />
-              Schedule Management
-            </CardTitle>
-            <CardDescription>
-              Configure scheduling rules and availability
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <Button className="w-full" variant="outline">
-                Business Hours
-              </Button>
-              <Button className="w-full" variant="outline">
-                Blackout Dates
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+        {featureGroups.map(g => (
+          <Card key={g.group} className="hover:shadow-lg transition-shadow">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                {g.icon}
+                {g.group}
+              </CardTitle>
+              <CardDescription>{g.desc}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {featureButtons.filter(b => b.group === g.group).map((b, idx) => {
+                  // Index for modal: use order in the featureButtons array
+                  const modalIdx = featureButtons.findIndex(btn => btn.title === b.title && btn.group === b.group);
+                  return (
+                    <Button
+                      key={b.title}
+                      className={`w-full ${b.buttonColor} transition-all`}
+                      variant="outline"
+                      onClick={() => setModal({open: true, idx: modalIdx})}
+                    >
+                      {b.title}
+                    </Button>
+                  );
+                })}
+              </div>
+            </CardContent>
+          </Card>
+        ))}
       </div>
+
+      {modal.open && modal.idx !== null && (
+        <FeatureModal
+          open={modal.open}
+          onOpenChange={open => setModal({open, idx: open ? modal.idx : null})}
+          title={featureButtons[modal.idx].title}
+          description={featureButtons[modal.idx].modalDesc}
+        />
+      )}
     </div>
   );
-};
+}
 
-export default Features;

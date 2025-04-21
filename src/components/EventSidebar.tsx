@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { CateringEvent } from "@/data/mock-events";
 import { format } from "date-fns";
-import { MapPin, Calendar, Clock } from "lucide-react";
+import { MapPin, Clock } from "lucide-react";
 import { 
   Sidebar,
   SidebarContent,
@@ -55,28 +55,39 @@ interface EventCardProps {
 
 function EventCard({ event, isSelected, onClick }: EventCardProps) {
   const eventDate = new Date(event.eventTime);
-  
-  // Function to get status indicator color
+
+  // Function to get card background color based on status
+  // Palette: Green = completed, Yellow = in-progress, Purple = upcoming, Gray = fallback
+  const getCardColor = (status: CateringEvent['status']) => {
+    switch(status) {
+      case 'upcoming': return 'bg-[#E5DEFF]';      // Soft purple
+      case 'in-progress': return 'bg-[#FEF7CD]';   // Soft yellow
+      case 'completed': return 'bg-[#F2FCE2]';     // Soft green
+      default: return 'bg-gray-100';
+    }
+  };
+  // Indicator color
   const getStatusColor = (status: CateringEvent['status']) => {
     switch(status) {
-      case 'upcoming': return 'bg-blue-500';
-      case 'in-progress': return 'bg-amber-500';
+      case 'upcoming': return 'bg-purple-500';
+      case 'in-progress': return 'bg-yellow-400';
       case 'completed': return 'bg-green-500';
-      default: return 'bg-gray-500';
+      default: return 'bg-gray-300';
     }
   };
   
   return (
     <Card 
       className={cn(
-        "p-3 cursor-pointer transition-all hover:shadow-md overflow-hidden",
-        isSelected ? "ring-2 ring-primary" : "hover:border-gray-300"
+        "p-3 cursor-pointer transition-all hover:shadow-lg overflow-hidden border-2",
+        getCardColor(event.status),
+        isSelected ? "ring-2 ring-primary border-primary" : "hover:border-gray-400"
       )}
       onClick={onClick}
     >
       <div className="flex justify-between items-start mb-2">
         <h3 className="font-medium line-clamp-1">{event.clientName}</h3>
-        <div className={cn("w-2.5 h-2.5 rounded-full", getStatusColor(event.status))} />
+        <div className={cn("w-2.5 h-2.5 rounded-full mt-1", getStatusColor(event.status))} />
       </div>
       
       <div className="flex items-center text-sm text-muted-foreground gap-1 mb-1.5">
@@ -96,3 +107,4 @@ function EventCard({ event, isSelected, onClick }: EventCardProps) {
     </Card>
   );
 }
+

@@ -1,4 +1,3 @@
-
 import { Calendar, CheckCircle, Timer, XCircle } from "lucide-react";
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
 import { CateringEvent } from "@/data/mock-events";
@@ -23,6 +22,7 @@ function getStatusStyles(status: "upcoming" | "in-progress" | "completed" | "can
       return "bg-gray-100 border-gray-300 text-gray-700";
   }
 }
+
 function getStatusIcon(status: "upcoming" | "in-progress" | "completed" | "cancelled") {
   switch(status) {
     case "upcoming":
@@ -54,9 +54,9 @@ export function EventSidebar({ events, selectedEventId, onSelectEvent }: EventSi
                   >
                     <div className="flex items-center">
                       {getStatusIcon(event.status as any)}
-                      <span className="font-semibold">{event.title}</span>
+                      <span className="font-semibold">{event.clientName}</span>
                     </div>
-                    <div className="text-xs text-muted-foreground">{event.date}</div>
+                    <div className="text-xs text-muted-foreground">{new Date(event.eventTime).toLocaleDateString()}</div>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}

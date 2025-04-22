@@ -31,13 +31,15 @@ const CreateEventDialog = ({ isOpen, onClose, onCreateEvent }: CreateEventDialog
     
     if (name.includes(".")) {
       const [parent, child] = name.split(".");
-      setFormData({
-        ...formData,
-        [parent]: {
-          ...formData[parent as keyof typeof formData],
-          [child]: value,
-        },
-      });
+      if (parent === "deliveryAddress") {
+        setFormData({
+          ...formData,
+          deliveryAddress: {
+            ...formData.deliveryAddress,
+            [child]: value,
+          },
+        });
+      }
     } else {
       setFormData({
         ...formData,
@@ -55,6 +57,7 @@ const CreateEventDialog = ({ isOpen, onClose, onCreateEvent }: CreateEventDialog
       eventTime: formData.eventTime || new Date().toISOString(),
       deliveryAddress: formData.deliveryAddress,
       status: "upcoming",
+      progress: 0, // Added missing progress property
       items: [],
       staff: [],
       notes: "",

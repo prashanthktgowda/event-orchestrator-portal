@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { SidebarProvider } from "@/components/ui/sidebar";
-import { EventSidebar } from "@/components/EventSidebar";
+import EventSidebar from "@/components/EventSidebar";
 import { EventDetails } from "@/components/EventDetails";
 import { mockEvents, CateringEvent } from "@/data/mock-events";
 

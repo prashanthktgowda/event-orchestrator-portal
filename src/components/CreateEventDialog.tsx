@@ -22,6 +22,7 @@ const CreateEventDialog = ({ isOpen, onClose, onCreateEvent }: CreateEventDialog
       city: "",
       state: "",
       zipCode: "",
+      coordinates: { lat: 0, lng: 0 }
     }
   });
 
@@ -71,6 +72,7 @@ const CreateEventDialog = ({ isOpen, onClose, onCreateEvent }: CreateEventDialog
         city: "",
         state: "",
         zipCode: "",
+        coordinates: { lat: 0, lng: 0 }
       }
     });
   };

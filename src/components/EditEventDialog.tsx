@@ -23,6 +23,7 @@ const EditEventDialog = ({ isOpen, onClose, event, onUpdateEvent }: EditEventDia
       city: "",
       state: "",
       zipCode: "",
+      coordinates: { lat: 0, lng: 0 }
     },
     notes: ""
   });
@@ -32,7 +33,10 @@ const EditEventDialog = ({ isOpen, onClose, event, onUpdateEvent }: EditEventDia
       setFormData({
         clientName: event.clientName,
         eventTime: format(new Date(event.eventTime), "yyyy-MM-dd'T'HH:mm"),
-        deliveryAddress: event.deliveryAddress,
+        deliveryAddress: {
+          ...event.deliveryAddress,
+          coordinates: event.deliveryAddress.coordinates || { lat: 0, lng: 0 }
+        },
         notes: event.notes || ""
       });
     }

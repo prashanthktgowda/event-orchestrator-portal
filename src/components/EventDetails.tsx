@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { CateringEvent, CateringItem, SubItem, StaffMember } from "@/data/mock-events";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,6 +8,9 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { MapPin, Calendar, Clock, User, Users, Plus, Trash, Edit, File, List, ListCheck } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
+import EditEventDialog from "./EditEventDialog";
+import AddItemDialog from "./AddItemDialog";
+import { useToast } from "@/hooks/use-toast";
 
 interface EventDetailsProps {
   event: CateringEvent;
@@ -15,12 +19,23 @@ interface EventDetailsProps {
 
 export function EventDetails({ event, onUpdateEvent }: EventDetailsProps) {
   const [activeTab, setActiveTab] = useState<string>("checklist");
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isAddItemDialogOpen, setIsAddItemDialogOpen] = useState(false);
+  const [editingNotes, setEditingNotes] = useState(false);
+  const [notes, setNotes] = useState(event.notes || "");
+  const { toast } = useToast();
+  
   const eventDate = new Date(event.eventTime);
 
   const handleOpenGoogleMaps = () => {
     const address = `${event.deliveryAddress.street}, ${event.deliveryAddress.city}, ${event.deliveryAddress.state} ${event.deliveryAddress.zipCode}`;
     const encodedAddress = encodeURIComponent(address);
     window.open(`https://www.google.com/maps/search/?api=1&query=${encodedAddress}`, '_blank');
+    
+    toast({
+      title: "Opening Maps",
+      description: `Opening Google Maps for ${event.deliveryAddress.city}, ${event.deliveryAddress.state}`,
+    });
   };
   
   // Handler for updating item status
@@ -51,6 +66,70 @@ export function EventDetails({ event, onUpdateEvent }: EventDetailsProps) {
     };
     onUpdateEvent(updatedEvent);
   };
+  
+  // Add new item to event
+  const handleAddItem = (newItem: CateringItem) => {
+    const updatedEvent = {
+      ...event,
+      items: [...event.items, newItem]
+    };
+    onUpdateEvent(updatedEvent);
+    setIsAddItemDialogOpen(false);
+    
+    toast({
+      title: "Item Added",
+      description: `${newItem.name} has been added to the checklist.`,
+    });
+  };
+  
+  // Save notes
+  const handleSaveNotes = () => {
+    const updatedEvent = {
+      ...event,
+      notes
+    };
+    onUpdateEvent(updatedEvent);
+    setEditingNotes(false);
+    
+    toast({
+      title: "Notes Saved",
+      description: "Event notes have been updated.",
+    });
+  };
+  
+  // Add special equipment
+  const handleAddEquipment = (equipment: string) => {
+    if (!equipment.trim()) return;
+    
+    const updatedEvent = {
+      ...event,
+      specialEquipment: [...event.specialEquipment, equipment]
+    };
+    onUpdateEvent(updatedEvent);
+  };
+  
+  // Remove special equipment
+  const handleRemoveEquipment = (index: number) => {
+    const updatedEvent = {
+      ...event,
+      specialEquipment: event.specialEquipment.filter((_, i) => i !== index)
+    };
+    onUpdateEvent(updatedEvent);
+  };
+  
+  // Delete item from checklist
+  const handleDeleteItem = (itemId: string) => {
+    const updatedEvent = {
+      ...event,
+      items: event.items.filter(item => item.id !== itemId)
+    };
+    onUpdateEvent(updatedEvent);
+    
+    toast({
+      title: "Item Removed",
+      description: "The item has been removed from the checklist.",
+    });
+  };
 
   return (
     <div className="h-full flex flex-col gap-4 p-4 overflow-y-auto">
@@ -69,7 +148,12 @@ export function EventDetails({ event, onUpdateEvent }: EventDetailsProps) {
             </div>
           </div>
         </div>
-        <Button variant="outline" size="sm" className="gap-1.5">
+        <Button 
+          variant="outline" 
+          size="sm" 
+          className="gap-1.5"
+          onClick={() => setIsEditDialogOpen(true)}
+        >
           <Edit className="h-4 w-4" />
           Edit Event
         </Button>
@@ -126,9 +210,14 @@ export function EventDetails({ event, onUpdateEvent }: EventDetailsProps) {
               item={item} 
               onStatusChange={(status) => handleItemStatusChange(item.id, status)}
               onSubItemStatusChange={(subItemId, status) => handleSubItemStatusChange(item.id, subItemId, status)}
+              onDelete={() => handleDeleteItem(item.id)}
             />
           ))}
-          <Button variant="outline" className="w-full mt-4">
+          <Button 
+            variant="outline" 
+            className="w-full mt-4"
+            onClick={() => setIsAddItemDialogOpen(true)}
+          >
             <Plus className="mr-2 h-4 w-4" />
             Add Item
           </Button>
@@ -151,6 +240,11 @@ export function EventDetails({ event, onUpdateEvent }: EventDetailsProps) {
                 {event.staff.map((member) => (
                   <StaffCard key={member.id} member={member} />
                 ))}
+                {event.staff.length === 0 && (
+                  <div className="text-center py-4 text-muted-foreground">
+                    No staff members assigned yet.
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -164,11 +258,31 @@ export function EventDetails({ event, onUpdateEvent }: EventDetailsProps) {
               <CardTitle className="text-lg">Notes</CardTitle>
             </CardHeader>
             <CardContent>
-              <p>{event.notes}</p>
-              <Button variant="ghost" size="sm" className="mt-2 gap-1">
-                <Edit className="h-4 w-4" />
-                Edit Notes
-              </Button>
+              {editingNotes ? (
+                <div className="space-y-2">
+                  <textarea 
+                    value={notes} 
+                    onChange={(e) => setNotes(e.target.value)}
+                    className="w-full p-2 border rounded-md min-h-[100px]"
+                  />
+                  <div className="flex justify-end gap-2">
+                    <Button variant="outline" size="sm" onClick={() => setEditingNotes(false)}>
+                      Cancel
+                    </Button>
+                    <Button size="sm" onClick={handleSaveNotes}>
+                      Save
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <p className="min-h-[60px]">{event.notes || "No notes added yet."}</p>
+                  <Button variant="ghost" size="sm" className="mt-2 gap-1" onClick={() => setEditingNotes(true)}>
+                    <Edit className="h-4 w-4" />
+                    Edit Notes
+                  </Button>
+                </>
+              )}
             </CardContent>
           </Card>
           
@@ -177,27 +291,58 @@ export function EventDetails({ event, onUpdateEvent }: EventDetailsProps) {
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-lg">Special Equipment</CardTitle>
-                <Button variant="ghost" size="sm" className="h-8 gap-1">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="h-8 gap-1"
+                  onClick={() => {
+                    const equipment = prompt("Enter special equipment:");
+                    if (equipment) handleAddEquipment(equipment);
+                  }}
+                >
                   <Plus className="h-4 w-4" />
                   Add
                 </Button>
               </div>
             </CardHeader>
             <CardContent>
-              <ul className="space-y-2">
-                {event.specialEquipment.map((item, index) => (
-                  <li key={index} className="flex items-center justify-between group">
-                    <span>• {item}</span>
-                    <Button variant="ghost" size="sm" className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100">
-                      <Trash className="h-4 w-4 text-muted-foreground" />
-                    </Button>
-                  </li>
-                ))}
-              </ul>
+              {event.specialEquipment.length > 0 ? (
+                <ul className="space-y-2">
+                  {event.specialEquipment.map((item, index) => (
+                    <li key={index} className="flex items-center justify-between group">
+                      <span>• {item}</span>
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100"
+                        onClick={() => handleRemoveEquipment(index)}
+                      >
+                        <Trash className="h-4 w-4 text-muted-foreground" />
+                      </Button>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-muted-foreground">No special equipment added yet.</p>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
       </Tabs>
+      
+      {/* Dialogs */}
+      <EditEventDialog 
+        isOpen={isEditDialogOpen}
+        onClose={() => setIsEditDialogOpen(false)}
+        event={event}
+        onUpdateEvent={onUpdateEvent}
+      />
+      
+      <AddItemDialog 
+        isOpen={isAddItemDialogOpen}
+        onClose={() => setIsAddItemDialogOpen(false)}
+        onAddItem={handleAddItem}
+      />
     </div>
   );
 }
@@ -206,9 +351,10 @@ interface ChecklistItemProps {
   item: CateringItem;
   onStatusChange: (status: CateringItem['status']) => void;
   onSubItemStatusChange: (subItemId: string, status: SubItem['status']) => void;
+  onDelete: () => void;
 }
 
-function ChecklistItem({ item, onStatusChange, onSubItemStatusChange }: ChecklistItemProps) {
+function ChecklistItem({ item, onStatusChange, onSubItemStatusChange, onDelete }: ChecklistItemProps) {
   const [expanded, setExpanded] = useState(true);
   
   const getStatusOptions = () => [
@@ -217,16 +363,23 @@ function ChecklistItem({ item, onStatusChange, onSubItemStatusChange }: Checklis
     { value: "packed", label: "Packed" },
     { value: "loaded", label: "Loaded" }
   ];
+
+  const completedCount = item.subItems.filter(sub => sub.status !== "pending").length;
+  const progress = (completedCount / item.subItems.length) * 100;
   
   return (
-    <Card>
+    <Card className="overflow-hidden">
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center">
-              <span className="text-xs font-medium">{
-                item.subItems.filter(sub => sub.status !== "pending").length
-              }/{item.subItems.length}</span>
+            <div className="relative w-6 h-6 rounded-full border border-primary flex items-center justify-center">
+              <div 
+                className="absolute inset-0.5 rounded-full bg-primary/10"
+                style={{
+                  background: `conic-gradient(var(--primary) ${progress}%, transparent ${progress}%)`
+                }}
+              ></div>
+              <span className="text-xs font-medium relative z-10">{completedCount}/{item.subItems.length}</span>
             </div>
             <CardTitle className="text-lg">{item.name}</CardTitle>
           </div>
@@ -247,6 +400,14 @@ function ChecklistItem({ item, onStatusChange, onSubItemStatusChange }: Checklis
               onClick={() => setExpanded(!expanded)}
             >
               {expanded ? "-" : "+"}
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="p-0 h-8 w-8 text-red-500 hover:text-red-600"
+              onClick={onDelete}
+            >
+              <Trash className="h-4 w-4" />
             </Button>
           </div>
         </div>
@@ -290,11 +451,6 @@ function ChecklistItem({ item, onStatusChange, onSubItemStatusChange }: Checklis
                 </select>
               </div>
             ))}
-            
-            <Button variant="ghost" size="sm" className="mt-2 w-full justify-start gap-1.5 text-muted-foreground">
-              <Plus className="h-3.5 w-3.5" />
-              Add Sub-Item
-            </Button>
           </div>
         </CardContent>
       )}

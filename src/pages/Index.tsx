@@ -1,93 +1,73 @@
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Calendar, Users, PieChart } from "lucide-react";
+import { Card } from "@/components/ui/card";
 import { Link } from "react-router-dom";
-import { mockEvents } from "@/data/mock-events";
+import { ArrowRight, Calendar, ClipboardCheck, Users } from "lucide-react";
 
 const Index = () => {
-  const todayEvents = mockEvents.filter(event => {
-    const eventDate = new Date(event.eventTime);
-    const today = new Date();
-    return eventDate.toDateString() === today.toDateString();
-  });
-
   return (
-    <div className="container py-6 space-y-6">
-      <h1 className="text-2xl font-bold">Dashboard</h1>
-      
-      <div className="grid gap-4 md:grid-cols-3">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Today's Events</CardTitle>
-            <Calendar className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{todayEvents.length}</div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Active Staff</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{mockEvents[0].staff.length}</div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Monthly Events</CardTitle>
-            <PieChart className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{mockEvents.length}</div>
-          </CardContent>
-        </Card>
+    <div className="min-h-screen relative">
+      {/* Background Image with Overlay */}
+      <div 
+        className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?auto=format&fit=crop&q=80')] 
+        bg-cover bg-center bg-no-repeat"
+      >
+        <div className="absolute inset-0 bg-black/70" />
       </div>
-      
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-        <Card className="col-span-4">
-          <CardHeader>
-            <CardTitle>Recent Events</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {mockEvents.slice(0, 5).map(event => (
-                <div key={event.id} className="flex items-center">
-                  <div className="space-y-1">
-                    <p className="text-sm font-medium leading-none">{event.clientName}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {new Date(event.eventTime).toLocaleDateString()}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <Button asChild variant="ghost" className="w-full mt-4">
-              <Link to="/events">View all events</Link>
-            </Button>
-          </CardContent>
-        </Card>
-        
-        <Card className="col-span-3">
-          <CardHeader>
-            <CardTitle>Quick Actions</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <Button asChild className="w-full" variant="outline">
-              <Link to="/events">Manage Events</Link>
-            </Button>
-            <Button asChild className="w-full" variant="outline">
-              <Link to="/staff">View Staff</Link>
-            </Button>
-            <Button asChild className="w-full" variant="outline">
-              <Link to="/calendar">Open Calendar</Link>
-            </Button>
-          </CardContent>
-        </Card>
+
+      {/* Content */}
+      <div className="relative z-10 container mx-auto px-4 py-16">
+        {/* Hero Section */}
+        <div className="max-w-3xl mx-auto text-center mb-16">
+          <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
+            CaterFlow
+          </h1>
+          <p className="text-xl text-gray-300 mb-8">
+            Streamline your catering operations with our comprehensive event management solution
+          </p>
+          <Button asChild className="bg-purple-600 hover:bg-purple-700">
+            <Link to="/events" className="inline-flex items-center">
+              Get Started <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
+          </Button>
+        </div>
+
+        {/* Features Grid */}
+        <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+          <Card className="p-6 bg-white/10 backdrop-blur-sm border-none text-white">
+            <Calendar className="h-12 w-12 mb-4 text-purple-400" />
+            <h3 className="text-xl font-semibold mb-2">Event Management</h3>
+            <p className="text-gray-300">
+              Efficiently organize and track multiple catering events with our intuitive dashboard
+            </p>
+          </Card>
+
+          <Card className="p-6 bg-white/10 backdrop-blur-sm border-none text-white">
+            <ClipboardCheck className="h-12 w-12 mb-4 text-purple-400" />
+            <h3 className="text-xl font-semibold mb-2">Smart Checklists</h3>
+            <p className="text-gray-300">
+              Create and manage detailed checklists for each event to ensure nothing is missed
+            </p>
+          </Card>
+
+          <Card className="p-6 bg-white/10 backdrop-blur-sm border-none text-white">
+            <Users className="h-12 w-12 mb-4 text-purple-400" />
+            <h3 className="text-xl font-semibold mb-2">Staff Coordination</h3>
+            <p className="text-gray-300">
+              Easily assign and manage staff for each event with our team management tools
+            </p>
+          </Card>
+        </div>
+
+        {/* Credentials Section */}
+        <div className="mt-16 text-center">
+          <p className="text-gray-400 mb-4">Trusted by leading catering companies</p>
+          <div className="flex justify-center space-x-8">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="w-32 h-12 bg-white/10 rounded-lg backdrop-blur-sm" />
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );

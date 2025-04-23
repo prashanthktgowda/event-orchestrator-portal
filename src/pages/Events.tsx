@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { EventDetails } from "@/components/EventDetails";
 import { mockEvents, CateringEvent } from "@/data/mock-events";
@@ -45,7 +44,6 @@ const Events = () => {
       title: "Event deleted",
       description: "The event has been removed.",
     });
-    // If the deleted event was selected, pick another or clear
     if (selectedEventId === id) {
       if (events.length > 1) {
         const other = events.find(e => e.id !== id);
@@ -77,14 +75,22 @@ const Events = () => {
         </div>
         {events.length > 0 ? (
           <div className="w-full overflow-x-auto">
-            <div className="flex gap-6 pb-2 overflow-x-auto snap-x snap-mandatory max-w-full">
+            <div
+              className="flex gap-6 pb-2 overflow-x-auto snap-x snap-mandatory max-w-full custom-scrollbar"
+              style={{ WebkitOverflowScrolling: "touch", scrollBehavior: "smooth" }}
+            >
               {events.map(event => (
                 <div
                   key={event.id}
-                  className={`relative min-w-[280px] sm:min-w-[340px] max-w-[95vw] p-5 bg-white rounded-xl border shadow hover:shadow-md transition-all snap-center
-                    ${selectedEventId === event.id ? "ring-2 ring-[#9b2cff] scale-[1.02]" : ""}
-                    `}
+                  className={
+                    "relative min-w-[280px] sm:min-w-[340px] max-w-[95vw] p-5 rounded-2xl border shadow bg-gradient-to-br from-white via-[#f6f4fb] to-[#e9e5f9] " +
+                    "hover:shadow-xl transition-all duration-200 cursor-pointer snap-center ring-1 ring-[#e9e5f9] " +
+                    (selectedEventId === event.id
+                      ? "ring-4 ring-[#9b2cff] scale-105 z-10"
+                      : "hover:scale-[1.02]")
+                  }
                   onClick={() => setSelectedEventId(event.id)}
+                  tabIndex={0}
                 >
                   <div className="flex flex-col gap-2">
                     <div className="flex items-center justify-between">
@@ -111,25 +117,24 @@ const Events = () => {
                       <span>
                         {event.deliveryAddress.city}, {event.deliveryAddress.state}
                       </span>
-                      <span className={`inline-block px-2 rounded-full text-xs ${event.status === "upcoming"
-                        ? "bg-blue-200 text-blue-800"
-                        : event.status === "completed"
-                          ? "bg-green-100 text-green-700"
-                          : "bg-red-100 text-red-700"
+                      <span className={`inline-block px-2 rounded-full text-xs ${
+                        event.status === "upcoming"
+                          ? "bg-blue-200 text-blue-800"
+                          : event.status === "completed"
+                            ? "bg-green-100 text-green-700"
+                            : "bg-red-100 text-red-700"
                         }`}>
                         {event.status}
                       </span>
                     </div>
                   </div>
-                  {/* Show event details if selected */}
                   {selectedEventId === event.id && (
-                    <div className="pt-2">
+                    <div className="pt-2 animate-fade-in">
                       <EventDetails event={event} onUpdateEvent={handleUpdateEvent} />
                     </div>
                   )}
-                  {/* Delete confirm modal */}
                   {confirmDeleteId === event.id && (
-                    <div className="absolute inset-0 bg-black/50 z-20 flex items-center justify-center rounded-xl">
+                    <div className="absolute inset-0 bg-black/60 z-20 flex items-center justify-center rounded-2xl animate-fade-in">
                       <div className="bg-white p-6 rounded-lg border shadow-lg flex flex-col items-center gap-6">
                         <span className="font-bold text-lg text-red-700">Delete this event?</span>
                         <span className="text-sm text-muted-foreground mb-2">This action cannot be undone.</span>
@@ -158,11 +163,10 @@ const Events = () => {
                   )}
                 </div>
               ))}
-              {/* Add New Event "card" appearance for small screens */}
               <div className="relative min-w-[180px] sm:min-w-[240px] max-w-[80vw] flex items-center justify-center">
                 <Button
                   onClick={() => setIsCreateDialogOpen(true)}
-                  className="w-full h-full flex flex-col items-center justify-center py-6 px-2 bg-[#f6f4fb] hover:bg-[#e9e5f9] border-2 border-dashed border-[#9b2cff] text-[#7E69AB] font-bold rounded-2xl text-lg"
+                  className="w-full h-full flex flex-col items-center justify-center py-6 px-2 bg-[#f6f4fb] hover:bg-[#e9e5f9] border-2 border-dashed border-[#9b2cff] text-[#7E69AB] font-bold rounded-2xl text-lg hover:scale-105 transition-all"
                 >
                   <Plus className="h-8 w-8 mb-1" />
                   New Event
@@ -187,22 +191,21 @@ const Events = () => {
           </div>
         )}
 
-        {/* Create Event Dialog */}
         <CreateEventDialog
           isOpen={isCreateDialogOpen}
           onClose={() => setIsCreateDialogOpen(false)}
           onCreateEvent={handleCreateEvent}
         />
       </main>
-      {/* Hide native scrollbar for event cards on mobile */}
       <style>
         {`
-          .snap-x::-webkit-scrollbar {
+          .custom-scrollbar::-webkit-scrollbar {
             display: none;
           }
-          .snap-x {
+          .custom-scrollbar {
             -ms-overflow-style: none;
             scrollbar-width: none;
+            scroll-behavior: smooth;
           }
         `}
       </style>

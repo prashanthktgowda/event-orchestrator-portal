@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 
 const cardSections = [
   {
-    icon: <Plus className="h-7 w-7 mr-1 text-purple-700" />,
+    icon: <Plus className="h-7 w-7 mr-1 text-[#9b2cff]" />,
     title: "Item Management",
     desc: "Add, edit, and manage catering items and equipment",
     actions: [
@@ -78,12 +78,12 @@ const cardSections = [
 export default function Features() {
   return (
     <div className="container py-8">
-      <h1 className="text-3xl font-extrabold mb-8">Features & Configuration</h1>
+      <h1 className="text-3xl font-extrabold mb-8 text-center">Features & Configuration</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {cardSections.map((section) => (
           <Card
             key={section.title}
-            className="rounded-xl border shadow-none animate-fade-in transition-all"
+            className="rounded-xl border-2 border-gray-200 shadow-none"
           >
             <CardContent className="p-7">
               <div className="flex items-center mb-1">
@@ -96,7 +96,7 @@ export default function Features() {
                   <Button
                     asChild
                     key={action.text}
-                    className={`rounded-md font-semibold text-base w-full h-12 transition-all ${action.color} hover-scale`}
+                    className={`rounded-md font-semibold text-base w-full h-12 transition-all ${action.color}`}
                   >
                     <Link to={action.url}>{action.text}</Link>
                   </Button>

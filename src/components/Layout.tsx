@@ -1,5 +1,4 @@
-
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import { Sidebar, SidebarContent, SidebarProvider, SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton } from "@/components/ui/sidebar";
 import { Calendar, Home, Users, Settings, LayoutGrid, PieChart, List } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
@@ -17,8 +16,14 @@ const navItems = [
 const Layout = () => {
   const location = useLocation();
   const isLandingPage = location.pathname === "/";
-  
+
+  // For events page, do not render sidebar, just the outlet
   if (isLandingPage) {
+    return <Outlet />;
+  }
+
+  // Remove sidebar from events route, just use Outlet and let Events.tsx handle layout
+  if (location.pathname === "/events") {
     return <Outlet />;
   }
 

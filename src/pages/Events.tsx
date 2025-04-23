@@ -57,68 +57,75 @@ const Events = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#f6f6f7] to-white overflow-x-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-[#f6f6f7] to-white overflow-x-hidden flex flex-col">
       <EventPageHeader
         showBackButton={false}
         onCreateClick={() => setIsCreateDialogOpen(true)}
         userMenu={<UserAuthMenu />}
       />
 
-      <div className="max-w-7xl mx-auto pt-8 pb-12 px-2 flex flex-col items-center min-h-[70vh]">
-        {/* New Event Button (hidden on mobile to avoid double action) */}
-        <Button
-          onClick={() => setIsCreateDialogOpen(true)}
-          className="mb-6 mt-2 bg-[#9b2cff] hover:bg-[#7D26D8] text-white font-semibold rounded-lg px-6 py-3 shadow-lg flex gap-2 hidden sm:flex"
-          size="lg"
-        >
-          <Plus className="h-5 w-5" />
-          Create New Event
-        </Button>
-
-        {/* Horizontal scrollable event cards */}
+      <main className="flex-1 w-full max-w-7xl mx-auto pt-6 pb-8 px-2 flex flex-col">
+        <div className="flex flex-row justify-between items-center mb-4 gap-2">
+          <h2 className="text-xl md:text-2xl font-bold text-[#7E69AB]">Events</h2>
+          <Button
+            onClick={() => setIsCreateDialogOpen(true)}
+            className="gap-2 bg-[#9b2cff] hover:bg-[#7D26D8] text-white font-semibold rounded-lg shadow hidden sm:flex"
+          >
+            <Plus className="h-5 w-5" />
+            Create New Event
+          </Button>
+        </div>
         {events.length > 0 ? (
-          <div className="w-full">
-            <div className="flex gap-6 overflow-x-auto pb-3 hide-scrollbar snap-x snap-mandatory">
+          <div className="w-full overflow-x-auto">
+            <div className="flex gap-6 pb-2 overflow-x-auto snap-x snap-mandatory max-w-full">
               {events.map(event => (
                 <div
                   key={event.id}
-                  className={`relative min-w-[325px] sm:min-w-[400px] max-w-[95vw] p-6 bg-white rounded-xl border shadow-sm transition-all snap-center ${
-                    selectedEventId === event.id
-                      ? "ring-2 ring-[#9b2cff] scale-[1.01]"
-                      : ""
-                  } hover:border-[#9b2cff]/40 cursor-pointer flex-shrink-0`}
+                  className={`relative min-w-[280px] sm:min-w-[340px] max-w-[95vw] p-5 bg-white rounded-xl border shadow hover:shadow-md transition-all snap-center
+                    ${selectedEventId === event.id ? "ring-2 ring-[#9b2cff] scale-[1.02]" : ""}
+                    `}
                   onClick={() => setSelectedEventId(event.id)}
                 >
-                  <div className="flex items-center justify-between gap-4 mb-3">
-                    <div className="flex-1">
-                      <h3 className="font-bold text-lg text-[#7E69AB] truncate">
+                  <div className="flex flex-col gap-2">
+                    <div className="flex items-center justify-between">
+                      <h3 className="font-bold text-lg truncate text-[#7E69AB]">
                         {event.clientName}
                       </h3>
-                      <div className="text-sm text-muted-foreground flex flex-wrap gap-4">
-                        <span>{new Date(event.eventTime).toLocaleString()}</span>
-                        <span>
-                          {event.deliveryAddress.city}, {event.deliveryAddress.state}
-                        </span>
-                        <span className={`inline-block px-2 rounded-full text-xs ml-0.5 ${event.status === "upcoming" ? "bg-blue-200 text-blue-800" : event.status === "completed" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
-                          {event.status}
-                        </span>
-                      </div>
+                      <Button
+                        variant="destructive"
+                        size="icon"
+                        className="ml-2"
+                        onClick={e => {
+                          e.stopPropagation();
+                          setConfirmDeleteId(event.id);
+                        }}
+                      >
+                        <Trash2 className="h-5 w-5" />
+                        <span className="sr-only">Delete</span>
+                      </Button>
                     </div>
-                    <Button
-                      variant="destructive"
-                      size="icon"
-                      className="ml-4"
-                      onClick={e => {
-                        e.stopPropagation();
-                        setConfirmDeleteId(event.id);
-                      }}
-                    >
-                      <Trash2 className="h-5 w-5" />
-                    </Button>
+                    <div className="text-sm text-muted-foreground flex flex-col gap-1">
+                      <span>
+                        {new Date(event.eventTime).toLocaleString()}
+                      </span>
+                      <span>
+                        {event.deliveryAddress.city}, {event.deliveryAddress.state}
+                      </span>
+                      <span className={`inline-block px-2 rounded-full text-xs ${event.status === "upcoming"
+                        ? "bg-blue-200 text-blue-800"
+                        : event.status === "completed"
+                          ? "bg-green-100 text-green-700"
+                          : "bg-red-100 text-red-700"
+                        }`}>
+                        {event.status}
+                      </span>
+                    </div>
                   </div>
-                  {/* Show details for selected */}
+                  {/* Show event details if selected */}
                   {selectedEventId === event.id && (
-                    <EventDetails event={event} onUpdateEvent={handleUpdateEvent} />
+                    <div className="pt-2">
+                      <EventDetails event={event} onUpdateEvent={handleUpdateEvent} />
+                    </div>
                   )}
                   {/* Delete confirm modal */}
                   {confirmDeleteId === event.id && (
@@ -151,11 +158,11 @@ const Events = () => {
                   )}
                 </div>
               ))}
-              {/* Add New Event "card" on mobile */}
-              <div className="relative min-w-[200px] sm:min-w-[260px] max-w-[80vw] flex items-center justify-center">
+              {/* Add New Event "card" appearance for small screens */}
+              <div className="relative min-w-[180px] sm:min-w-[240px] max-w-[80vw] flex items-center justify-center">
                 <Button
                   onClick={() => setIsCreateDialogOpen(true)}
-                  className="w-full h-full flex flex-col items-center justify-center py-8 px-2 bg-[#f6f4fb] hover:bg-[#e9e5f9] border-2 border-dashed border-[#9b2cff] text-[#7E69AB] font-bold rounded-2xl text-xl"
+                  className="w-full h-full flex flex-col items-center justify-center py-6 px-2 bg-[#f6f4fb] hover:bg-[#e9e5f9] border-2 border-dashed border-[#9b2cff] text-[#7E69AB] font-bold rounded-2xl text-lg"
                 >
                   <Plus className="h-8 w-8 mb-1" />
                   New Event
@@ -186,14 +193,14 @@ const Events = () => {
           onClose={() => setIsCreateDialogOpen(false)}
           onCreateEvent={handleCreateEvent}
         />
-      </div>
-      {/* Visually hidden horizontal scroll for accessibility */}
+      </main>
+      {/* Hide native scrollbar for event cards on mobile */}
       <style>
         {`
-          .hide-scrollbar::-webkit-scrollbar {
+          .snap-x::-webkit-scrollbar {
             display: none;
           }
-          .hide-scrollbar {
+          .snap-x {
             -ms-overflow-style: none;
             scrollbar-width: none;
           }

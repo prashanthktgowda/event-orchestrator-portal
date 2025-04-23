@@ -23,9 +23,9 @@ const EventPageHeader = ({ onCreateClick, showBackButton, userMenu }: EventPageH
   const location = useLocation();
 
   return (
-    <header className="sticky top-0 z-30 w-full bg-white/90 backdrop-blur-md border-b px-2 md:px-0 shadow-sm">
-      <div className="max-w-full mx-auto flex items-center justify-between py-3 px-2 md:px-6">
-        <div className="flex items-center gap-3">
+    <header className="sticky top-0 z-30 w-full bg-white/95 backdrop-blur border-b shadow-sm px-2 md:px-0">
+      <div className="max-w-full mx-auto flex flex-col md:flex-row items-center justify-between py-2 px-2 md:px-6 gap-3 md:gap-0">
+        <div className="flex items-center gap-2 w-full md:w-auto">
           {showBackButton && (
             <Button
               variant="ghost"
@@ -38,10 +38,11 @@ const EventPageHeader = ({ onCreateClick, showBackButton, userMenu }: EventPageH
             </Button>
           )}
           <Link to="/events">
-            <h1 className="text-2xl font-bold tracking-tight text-[#7E69AB]">Event Orchestrator</h1>
+            <h1 className="text-xl md:text-2xl font-bold tracking-tight text-[#7E69AB]">
+              Event Orchestrator
+            </h1>
           </Link>
-          {/* Inline navigation moved to header */}
-          <nav className="hidden md:flex gap-1 ml-4">
+          <nav className="hidden md:flex gap-1 ml-3">
             {navLinks.map(link => (
               <Link
                 to={link.path}
@@ -57,7 +58,7 @@ const EventPageHeader = ({ onCreateClick, showBackButton, userMenu }: EventPageH
             ))}
           </nav>
         </div>
-        <div className="flex gap-2 items-center">
+        <div className="flex gap-2 items-center w-full md:w-auto justify-end">
           <Button
             onClick={onCreateClick}
             size="sm"
@@ -67,23 +68,23 @@ const EventPageHeader = ({ onCreateClick, showBackButton, userMenu }: EventPageH
           </Button>
           {userMenu}
         </div>
+        {/* Mobile nav */}
+        <nav className="flex md:hidden gap-1 w-full overflow-x-auto mt-2">
+          {navLinks.map(link => (
+            <Link
+              to={link.path}
+              key={link.path}
+              className={`px-2 py-1 rounded-md text-xs font-medium flex-shrink-0 transition ${
+                location.pathname === link.path
+                  ? "bg-[#e9e5f9] text-[#7E69AB]"
+                  : "hover:bg-[#f6f4fb] text-gray-600"
+              }`}
+            >
+              {link.title}
+            </Link>
+          ))}
+        </nav>
       </div>
-      {/* Mobile nav */}
-      <nav className="flex md:hidden gap-1 px-2 pt-1 pb-2 w-full overflow-x-auto">
-        {navLinks.map(link => (
-          <Link
-            to={link.path}
-            key={link.path}
-            className={`px-2 py-1 rounded-md text-xs font-medium flex-shrink-0 transition ${
-              location.pathname === link.path
-                ? "bg-[#e9e5f9] text-[#7E69AB]"
-                : "hover:bg-[#f6f4fb] text-gray-600"
-            }`}
-          >
-            {link.title}
-          </Link>
-        ))}
-      </nav>
     </header>
   );
 };
